@@ -14,4 +14,4 @@ original authors.
 
 Currently available resources include:
 
-* [a webinar](https://github.com/reconhub/talks/tree/master/Webinar_TJ_April_2017) introducing RECON (April 2017); credit: Thibaut Jombart
+* [a webinar](https://github.com/reconhub/talks/tree/master/webinar_TJ_April_2017) introducing RECON (April 2017); credit: Thibaut Jombart
