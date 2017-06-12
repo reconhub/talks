@@ -15,3 +15,5 @@ original authors.
 Currently available resources include:
 
 * [a webinar](https://github.com/reconhub/talks/tree/master/webinar_TJ_April_2017) introducing RECON (April 2017); credit: Thibaut Jombart
+* [a talk given in the session of **R in Public Health** of China R Conference 2017 (Beijing)](https://github.com/reconhub/talks/tree/master/China-R_JC_May_2017) introducing RECON and how to use RECON packages to analyze influenza data (May 2017); credit: Jun Cai
+

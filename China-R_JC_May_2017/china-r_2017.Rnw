@@ -1,0 +1,725 @@
+\documentclass[xcolor=svgnames]{beamer}
+\usecolortheme[named=FireBrick]{structure}
+\usetheme{CambridgeUS}
+
+% custom color of tsinghua
+\xdefinecolor{tsinghua}{rgb}{0.455,0.204,0.506}  % RGB #82318E
+
+\setbeamercolor{palette primary}{fg=tsinghua}
+\setbeamercolor{palette secondary}{fg=tsinghua}
+\setbeamercolor{palette tertiary}{bg=tsinghua,fg=white}
+
+\setbeamercolor{frametitle}{fg=tsinghua}
+\setbeamercolor{title}{fg=white,bg=tsinghua}
+
+\setbeamercolor{navigation symbols}{bg=tsinghua!10!white,fg=tsinghua!50!white}
+
+\setbeamercolor{item projected}{bg=tsinghua}
+% custom color of tsinghua
+\hypersetup{colorlinks,linkcolor=,urlcolor=tsinghua}
+
+\usepackage{lmodern} % use Latin Modern with T1 enconding
+\usepackage[T1]{fontenc}
+
+\usepackage{fontawesome}
+\usepackage{array}
+
+\usepackage{caption}
+\usepackage[backend=bibtex, citestyle=authoryear]{biblatex}
+\addbibresource{bibliography.bib}
+\renewcommand*{\bibfont}{\scriptsize} % change font size of references
+
+% remove extra blank lines around code and output
+\renewenvironment{knitrout}{\setlength{\topsep}{0mm}}{}
+
+\usepackage{caption}
+\captionsetup[figure]{labelformat=empty}
+
+%\usepackage[timeinterval=1]{tdclock}
+
+% set figure path
+\graphicspath{{figure/}}
+
+\title[R in Public Health]{R Epidemics Consortium and Using Its Packages to Analyze Influenza Data}
+\author[Jun Cai]{
+	Jun Cai
+}
+\institute[DESS, THU]{
+	Ph.D. Candidate in Ecology\\
+	Department of Earth System Science\\
+	Tsinghua University
+}
+%\date[\initclock\tdtime]{\today}
+\date{May 21, 2017}
+
+\titlegraphic{\includegraphics[width=3cm]{tsinghua/THU-transparent.png}\hspace*{4.75cm}~%
+   \includegraphics[width=3cm]{tsinghua/DESS-transparent.png}
+}
+
+\begin{document}
+% make title page
+\frame{
+  \titlepage
+  
+  \scriptsize Acknowledgement: Materials on the R Epidemics Consortium (RECON) were partly provided by Dr. Thibaut Jombart, the founder of RECON. 
+}
+
+\section*{Outline}
+\frame{
+    \tableofcontents
+}
+
+\section{The R Epidemic CONsortium (RECON)}
+\begin{frame}
+\frametitle{Precursor of RECON --- Hackout 3}
+
+\begin{exampleblock}{Hackout 3 (\href{http://hackout3.ropensci.org}{hackout3.ropensci.org})}
+  An
+  \raisebox{-.1\baselineskip}{
+    \includegraphics[
+      height=\baselineskip,
+      width=\baselineskip,
+      keepaspectratio,
+    ]{Rlogo.png}} hackthon of analysis and modelling tools for emergency outbreak response
+\end{exampleblock}
+
+\begin{columns}
+  \begin{column}{.5\linewidth}
+    \includegraphics[width=6cm]{hackout3/hackout3_final_trim.jpg}
+  \end{column}
+    
+  \begin{column}{.45\linewidth}
+    \includegraphics[height=4cm]{hackout3/organizers_trim.jpg}
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\begin{exampleblock}{The \textbf{R} \textbf{E}pidemics \textbf{CON}sortium (RECON)}
+  a group of international experts in infectious disease modelling, public health, and software development to create the next generation of analysis tools for disease outbreak response using
+  \raisebox{-.1\baselineskip}{
+    \includegraphics[
+      height=\baselineskip,
+      width=\baselineskip,
+      keepaspectratio,
+    ]{Rlogo.png}}
+\end{exampleblock}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=5.3cm]{RECON/R_Epidemics_Consortium.png} \\
+  \href{http://www.repidemicsconsortium.org}{www.repidemicsconsortium.org}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+%\frametitle{In a nutshell}
+
+\includegraphics[width=3cm]{RECON/logo.png}
+
+\begin{itemize}
+  \item started 6th September, 2016
+  \item 65 people (57 members, 6 advisory board, 2 administrative staffs)
+  \item 13 countries, $>$ 35 institutions
+  \item 3 new packages (\href{https://cran.r-project.org/web/packages/outbreaks/index.html}{\textit{outbreaks}}, \href{https://cran.r-project.org/web/packages/incidence/index.html}{\textit{incidence}}, and \href{https://cran.r-project.org/web/packages/epicontacts/index.html}{\textit{epicontacts}}) released, \textasciitilde 10 - 15 packages in development
+  \item involvement in training programmes starting in 2017 (\href{https://www.cdc.gov/globalhealth/healthprotection/fetp/}{the \textbf{F}ield \textbf{E}pidemiology \textbf{T}raining \textbf{P}rogram (FETP)}, \href{http://ecdc.europa.eu/en/epiet/Pages/HomeEpiet.aspx}{the \textbf{E}uropean \textbf{P}rogramme for \textbf{I}ntervention \textbf{E}pidemiology Training (EPIET)}, ...)
+  \item {\color{darkred}public forum}, blog, online resources
+\end{itemize}
+
+\vspace*{-1.5em}
+\begin{figure}
+  \centering
+  \includegraphics[height=4cm]{RECON/RECON_people.pdf}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\vspace*{-.5em}
+\begin{exampleblock}{The RECON forum (\href{http://discourse.repidemicsconsortium.org}{discourse.repidemicsconsortium.org})}
+  A platform for public as well as private discussions relating to the use and development of tools for disease outbreaks analysis in
+  \raisebox{-.1\baselineskip}{
+    \includegraphics[
+      height=\baselineskip,
+      width=\baselineskip,
+      keepaspectratio,
+    ]{Rlogo.png}}
+\end{exampleblock}
+
+\vspace*{-1em}
+\begin{columns}
+  \begin{column}{.48\linewidth}
+    \begin{figure}
+      \centering
+    \includegraphics[height=5.5cm, width=5cm]{RECON/The_forum.png}
+\end{figure}
+  \end{column}
+    
+  \begin{column}{.48\linewidth}
+    \begin{figure}
+      \centering
+      \includegraphics[height=5.5cm, width=5cm]{RECON/RECON_forum.png}
+    \end{figure}
+  \end{column}
+\end{columns}
+
+\vspace*{.5em}
+\centerline{\alert{\Huge Join us!}}
+\end{frame}
+
+
+\section{RECON Packages}
+\begin{frame}
+\frametitle{Aims of RECON packages}
+
+\begin{itemize}
+  \item \textbf{Efficiency}: used in real time to improve situation awareness and inform intervention strategies. {\color{darkred}cutting-edge, computer-efficient statistical methods and epidemic models}
+  \item \textbf{Reliability}: thoroughly and constantly tested using professional software development platform (e.g.,\href{https://github.com/}{GitHub}) and methods (e.g., \href{https://cran.r-project.org/web/packages/testthat/index.html}{testthat} and \href{https://cran.r-project.org/web/packages/covr/index.html}{covr}). {\color{darkred}extensive unit testing, code review}
+  \item \textbf{Accessibility}: free, open-source, and available on virtually any platform, easy learning curve; {\color{darkred}extensive documentation, tutorials, GUI implementation}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{itemize}
+  \item \textbf{Released packages}
+    \vspace*{-1.5em}
+    \begin{table}[h!]
+      \centering
+      \begin{tabular}{c m{10cm}}
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/outbreaks.png}
+        \end{minipage} & \textbf{\color{darkred}{outbreaks}}: collection of outbreak data. \href{http://www.repidemicsconsortium.org/outbreaks/}{\faHome} \hspace{.5em}\href{https://github.com/reconhub/outbreaks}{\faGithub} \\
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/incidence.png}
+        \end{minipage} & \textbf{\color{darkred}incidence}: computation, handling, visualisation and simple modelling of incidence. \href{http://www.repidemicsconsortium.org/incidence/}{\faHome} \hspace{.5em}\href{https://github.com/reconhub/incidence}{\faGithub} \\
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/epicontacts.png}
+        \end{minipage} & \textbf{epicontacts}: handling, visualisation and analysis of epidemiological contacts. \href{http://www.repidemicsconsortium.org/epicontacts/}{\faHome} \hspace{.5em}\href{https://github.com/reconhub/epicontacts}{\faGithub} \\
+      \end{tabular}
+    \end{table}
+    \vspace*{-.5em}
+    
+  \item \textbf{Up-and-coming packages}
+    \vspace*{-1.5em}
+    \begin{table}[h!]
+      \centering
+      \begin{tabular}{c m{10cm}}
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/cleanr.png}
+        \end{minipage} & \textbf{cleanr}: rationalised and reproducible data cleaning. \href{https://github.com/Hackout3/cleanr}{\faGithub} \\
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/dibbler.png}
+        \end{minipage} & \textbf{dibbler}: investigation of food-borne disease outbreaks. \href{https://github.com/thibautjombart/dibbler}{\faGithub} \\
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/distcrete.png}
+        \end{minipage} & \textbf{distcrete}: discretized probability distributions. \href{https://github.com/reconhub/distcrete}{\faGithub} \\
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/epimatch.png}
+        \end{minipage} & \textbf{epimatch}: finding matching patient records across tabular data sets. \href{https://github.com/Hackout3/epimatch}{\faGithub} \\
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/outbreaker2.png}
+        \end{minipage} & \textbf{outbreaker2}: inferring transmission chains by integrating epidemiological and genetic data. \href{https://github.com/reconhub/outbreaker2}{\faGithub} \\
+      \end{tabular}
+    \end{table}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{itemize}
+  \item \textbf{Up-and-coming packages (continued)}
+    \vspace*{-1.5em}
+    \begin{table}[h!]
+      \centering
+      \begin{tabular}{c m{10cm}}
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/vimes.png}
+        \end{minipage} & \textbf{vimes}: Visualisation and Monitoring of Epidemics, including some outbreak detection algorithms. \href{https://github.com/reconhub/vimes}{\faGithub} \\
+      \end{tabular}
+    \end{table}
+    \vspace*{-.5em}
+    
+  \item \textbf{Related packages}
+    \vspace*{-1.5em}
+    \begin{table}[h!]
+      \centering
+      \begin{tabular}{c m{10cm}}
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/EpiEstim.png}
+        \end{minipage} & \textbf{\color{darkred}EpiEstim}: quantifying transmissibility throughout an epidemic from incidence time series. \href{https://github.com/annecori/EpiEstim}{\faGithub} \\
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/OutbreakTools.png}
+        \end{minipage} & \textbf{OutbreakTools}: basic analysis and visualisation of complex line-list data (to be replaced by \textit{incidence} and \textit{epicontacts}). \href{https://github.com/thibautjombart/OutbreakTools}{\faGithub} \\
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/EpiJSON.png}
+        \end{minipage} & \textbf{EpiJSON}: implementation of a generic json format for case outbreak data. \href{https://github.com/Hackout2/EpiJSON}{\faGithub} \\
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/repijson.png}
+        \end{minipage} & \textbf{repijson}: R package implementing \textit{EpiJSON} format. \href{https://github.com/Hackout2/repijson}{\faGithub} \\
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/outbreaker.png}
+        \end{minipage} & \textbf{outbreaker}: inferring transmission chains using temporal and genetic information. \href{https://github.com/thibautjombart/outbreaker}{\faGithub} \\
+        \begin{minipage}{.8cm}
+        \includegraphics[height=.8cm,width=.8cm]{RECON/DSAIDE.png}
+        \end{minipage} & \textbf{DSAIDE}: Dynamical Systems Approach to Infectious Disease Epidemiology - a Shiny/R based teaching.  \href{https://github.com/ahgroup/DSAIDE}{\faGithub} \\
+      \end{tabular}
+    \end{table}
+\end{itemize}
+\end{frame}
+
+
+\section{Epidemic Curve and \protect\textit{incidence} Package}
+\begin{frame}
+
+\begin{exampleblock}{Epidemic Curve (Epi Curve)}
+shows the frequency of new cases over time based on the {\color{darkred}date of onset} of disease.
+\end{exampleblock}
+
+Number of confirmed (N = 97) and probable (N = 260)\footnote{Probable cases for which dates of illness onset are known.} cases of swine-origin influenza A (H1N1) virus (S-OIV) infection, by date of illness onset --- Mexico, March 15 -- April 26, 2009 (adapted from \cite{CDCP-MMWR-2009})
+\vspace*{-2em}
+\begin{columns}
+  \begin{column}{.6\linewidth}
+    \begin{figure}
+      \centering
+      \includegraphics[width=8cm]{CDC_MMWR.png}
+    \end{figure}
+  \end{column}
+    
+  \begin{column}{.35\linewidth}
+    \begin{itemize}
+      \item Stacked bar plot
+      \item Daily: date formated tick labels on x-axis
+    \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ubiquitous plot in epidemiological reports}
+
+\vspace*{-3em}
+\begin{columns}
+  \begin{column}{.6\linewidth}
+    \begin{figure}
+      \centering
+      \includegraphics[width=8cm]{Rpt_LabSurveillanceDataPastWeeksByCtry.pdf}
+    \end{figure}
+  \end{column}
+  
+  \begin{column}{.35\linewidth}
+    \begin{itemize}
+      \item Stacked bar plot
+      \item Weekly: x-axis tick labels -- \href{https://en.wikipedia.org/wiki/ISO_8601}{ISO 8601} week number
+    \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+% need the option [fragile] for code output!
+\begin{frame}[fragile]
+  \begin{exampleblock}{Epidemic Curve of Influenza A H7N9 in China, 2013}
+    \begin{itemize}
+      \item By gender
+      \item Daily and weekly
+    \end{itemize}
+  \end{exampleblock}
+ 
+\begin{scriptsize} 
+<<fluH7N9_china_2013, echo=TRUE, eval=TRUE>>=
+library(outbreaks)
+head(fluH7N9_china_2013, 6)
+range(fluH7N9_china_2013$date_of_onset, na.rm = TRUE)
+@
+\end{scriptsize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Plot daily epidemic curve from scratch}
+
+\begin{columns}
+  \begin{column}{.48\linewidth}
+    \begin{tiny}
+    <<daily_plot, echo=TRUE, eval=FALSE>>=
+    date.range <- range(df$date_of_onset)
+    full.date <- seq(date.range[1], date.range[2], 
+                     by = "day")
+    
+    # count dated events according to breaks
+    count.date <- function(dated.events, breaks) {
+      df <- data.frame(date = dated.events)
+      n <- sapply(breaks, function(b) {
+        subdf <- subset(df, date == b)
+        nrow(subdf)
+      })
+      return(data.frame(date = breaks, n))
+    }
+    
+    date.list <- tapply(df$date_of_onset, df$gender, 
+                        count.date, full.date)
+    date.df <- reduce(date.list, left_join, by = "date")
+    names(date.df)[-1] <- names(date.list)
+    
+    # reshape data.frame from wide into long format
+    library(reshape2)
+    date.long <- melt(date.df, id.vars = c("date"), 
+                      variable.name = 'groups', 
+                      value.name = "counts")
+    @
+    \end{tiny}
+  \end{column}
+  
+  \begin{column}{.5\linewidth}
+    \begin{tiny}
+    <<daily_plot_continued, echo=TRUE, eval=FALSE>>=
+    library(ggplot2)
+    library(ggsci)
+    library(scales)
+    ggplot(date.long, aes(date, counts, fill = groups)) + 
+      geom_bar(stat = "identity", position = "stack",
+               width = 1, color = "white", alpha = .7) + 
+      labs(x = "", y = "Daily incidence") + 
+      scale_fill_npg() + 
+      scale_x_date(labels = date_format("%d %b %Y"))
+    @
+    \end{tiny}
+    \centering
+    \includegraphics[height=4cm]{daily.pdf}
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Plot ISOweek-based weekly epidemic curve from scratch}
+
+\begin{columns}
+  \begin{column}{.48\linewidth}
+    \begin{tiny}
+    <<weekly_plot, echo=TRUE, eval=FALSE>>=
+    library(ISOweek)
+    full.week <- unique(ISOweek(full.date))
+    
+    df1 <- df %>%
+      mutate(isoweek = ISOweek(date_of_onset)) %>%
+      glimpse()
+    
+    count.isoweek <- function(isoweek.events, breaks) {
+      df <- data.frame(isoweek = isoweek.events)
+      n <- sapply(breaks, function(b) {
+        subdf <- subset(df, isoweek == b)
+        nrow(subdf)
+      })
+      return(data.frame(isoweek = breaks, n))
+    }
+    
+    week.list <- tapply(df1$isoweek, df$gender, 
+                        count.isoweek, full.week)
+    week.df <- reduce(week.list, left_join, 
+                      by = "isoweek")
+    names(week.df)[-1] <- names(week.list)
+    # add isoweek starting day
+    weekdate <- paste0(week.df$isoweek, "-1")
+    week.df$weekday <- ISOweek2date(weekdate)
+    
+    # reshape data.frame from wide into long format
+    week.long <- melt(week.df, id.vars = c("isoweek", 
+                                           "weekday"), 
+                      variable.name = 'groups', 
+                      value.name = "counts")
+    @
+    \end{tiny}
+  \end{column}
+  
+  \begin{column}{.5\linewidth}
+    \begin{tiny}
+    <<weekly_plot_continued, echo=TRUE, eval=FALSE>>=
+    # x-axis tick labels
+    ind <- trunc(seq(1, nrow(week.df), length = 6))
+    tickind <- week.df$weekday[ind]
+    ticklab <- week.df$isoweek[ind]
+    ggplot(week.long, aes(weekday, counts, fill = groups)) + 
+      geom_bar(stat = "identity", position = "stack",
+               width = 7, color = "white", alpha = .7) + 
+      labs(x = "", y = "Weekly incidence") + 
+      scale_fill_npg() + 
+      scale_x_date(breaks = tickind, labels = ticklab)
+    @
+    \end{tiny}
+    \centering
+    \includegraphics[height=4cm]{weekly.pdf}
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{\protect\href{https://cran.r-project.org/web/packages/incidence/index.html}{\textit{incidence}} package}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=8cm]{incidence_github.png}
+\end{figure}
+
+\begin{columns}
+  \begin{column}{.5\linewidth}
+    \begin{figure}
+      \centering
+      \includegraphics[height=4cm]{RECON/incidence_author.png}
+    \end{figure}
+  \end{column}
+  
+  \begin{column}{.45\linewidth}
+    \begin{exampleblock}{Vignettes}
+      \begin{itemize}
+        \item \href{https://cran.r-project.org/web/packages/incidence/vignettes/overview.html}{Overview of the incidence package}
+        \item \href{https://cran.r-project.org/web/packages/incidence/vignettes/incidence_class.html}{Details of the incidence class}
+        \item \href{https://cran.r-project.org/web/packages/incidence/vignettes/customize_plot.html}{Customize plots of incidence}
+      \end{itemize}
+    \end{exampleblock}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Daily plot using \textit{incidence}}
+
+\begin{columns}
+  \begin{column}{.48\linewidth}
+    \begin{tiny}
+    <<inc_daily, echo=TRUE, eval=TRUE>>=
+    suppressPackageStartupMessages(library(tidyverse))
+    df <- fluH7N9_china_2013 %>%
+      filter(!is.na(date_of_onset))
+    
+    library(incidence)
+    (inc.gender.daily <- incidence(df$date_of_onset, 
+                                   groups = df$gender, 
+                                   interval = 1))
+    inc.gender.daily %>%
+      as.data.frame() %>%
+      head(3)
+    @
+    \end{tiny}
+    
+    \begin{tiny}
+    <<inc_daily_plot, echo=TRUE, eval=FALSE>>=
+    plot(inc.gender.daily, border = "white") + 
+      scale_x_date(labels = date_format("%d %b %Y"))
+    @
+    \end{tiny}
+  \end{column}
+  
+  \begin{column}{.5\linewidth}
+    \centering
+    \includegraphics[height=4cm]{inc_daily.pdf}
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Weekly plot using \textit{incidence}}
+
+\begin{columns}
+  \begin{column}{.48\linewidth}
+    \begin{tiny}
+    <<inc_week, echo=TRUE, eval=TRUE>>=
+    # weekly plot, but not calendar week-based
+    inc.gender.week <- incidence(df$date_of_onset, 
+                                 groups = df$gender, 
+                                 interval = 7, 
+                                 iso_week = FALSE)
+    inc.gender.week
+    inc.gender.week %>% 
+      as.data.frame() %>%
+      head(3)
+    @
+    \end{tiny}
+    
+    \begin{tiny}
+    <<inc_week_plot, echo=TRUE, eval=FALSE>>=
+    plot(inc.gender.week, border = "white") + 
+      scale_x_date(labels = date_format("%d %b %Y"))
+    @
+    \end{tiny}
+  \end{column}
+  
+  \begin{column}{.5\linewidth}
+    \centering
+    \includegraphics[height=4cm]{inc_week.pdf}\\
+    Pay attention to the red bar starting around 01 May 2013
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{ISOweek-based weekly plot using \textit{incidence}}
+
+\begin{columns}
+  \begin{column}{.48\linewidth}
+    \begin{tiny}
+    <<inc_isoweek, echo=TRUE, eval=TRUE>>=
+    # isoweek-based weekly plot
+    inc.gender.isoweek <- incidence(df$date_of_onset, 
+                                    groups = df$gender, 
+                                    interval = 7, 
+                                    iso_week = TRUE)
+    inc.gender.isoweek
+    inc.gender.isoweek %>%
+      as.data.frame() %>%
+      head(3)
+    @
+    \end{tiny}
+    
+    \begin{tiny}
+    <<inc_isoweek_plot, echo=TRUE, eval=FALSE>>=
+    # by default label x-axis ticks with isoweek number
+    plot(inc.gender.isoweek, border = "white")
+    # label x-axis ticks with isoweek starting date
+    plot(inc.gender.isoweek, border = "white", 
+         labels_iso_week = FALSE) + 
+      scale_x_date(labels = date_format("%d %b %Y"))
+    @
+    \end{tiny}
+  \end{column}
+  
+  \begin{column}{.5\linewidth}
+    \centering
+    \includegraphics[height=4cm]{inc_isoweek_weeknum.pdf}\\
+    \vspace*{-.5em}
+    \includegraphics[height=4cm]{inc_isoweek_date.pdf}
+  \end{column}
+\end{columns}
+\end{frame}
+
+
+\section{Time-varying Reproduction Number $R_t$ and \protect\textit{EpiEstim} package}
+\begin{frame}
+
+\begin{exampleblock}{The Reproduction Number $R$}
+the {\color{darkred}average} number of secondary cases caused by a single, typical infected individual in a population with some level of susceptibility. (\cite{Nelson.Williams-Infectiousdiseaseepidemiology-2013}, ch. 6, pp. 133)
+\end{exampleblock}
+
+\begin{itemize}
+  \item the primary metric used to quantify the transmission of a disease in infectious disease dynamics
+  \item time-varying reproduction number $R_t$ since $R$ changes over time; basic reproduction number $R_0$ refers to a theoretical time 0 when the entire population is susceptible (\cite{Anderson.May-InfectiousDiseasesHumans-1992}, ch. 2, pp. 17).
+  \item $R_t$ provides feedback on the effectiveness of interventions and on the the need to intensify control efforts; reducing $R$ below the threshold value of 1 and as close to 0 as possible (\cite{Cori.etal-Am.J.Epidemiol.-2013}).
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{NYC_school_outbreak_final.png}
+  \caption{Epidemic Curve of Outbreak of 2009 Pandemic Influenza A (H1N1) at a New York City School (modified from \cite{Lessler.etal-NEnglJMed-2009})}
+\end{figure}
+
+\vspace*{-1em}
+\centerline{\alert{\Large How to easily estimate $R_t$ in real time?}}
+\end{frame}
+
+\begin{frame}
+
+\begin{exampleblock}{\href{https://github.com/annecori/EpiEstim}{\textit{EpiEstim}} package (in development)}
+A tool to estimate time varying reproduction numbers from epidemic curves
+\end{exampleblock}
+
+\vspace*{-1em}
+\begin{columns}
+  \begin{column}{.35\linewidth}
+    \begin{figure}
+      \centering
+      \includegraphics[height=5cm]{RECON/Anne_Cori.png}
+    \end{figure}
+  \end{column}
+  
+  \begin{column}{.65\linewidth}
+    \begin{figure}
+      \centering
+      \includegraphics[height=6cm]{EpiEstim_paper.png}
+    \end{figure}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Estimating $R_t$ using \textit{EpiEstim}}
+
+\begin{scriptsize}
+<<estimate_R, echo=TRUE, eval=TRUE>>=
+load("data/pdmH1N1_beijing_2009.rda")
+glimpse(pdmH1N1_beijing_2009)
+    
+# daily epidemic curve
+dec <- as.data.frame(incidence(pdmH1N1_beijing_2009$onset, interval = 1))
+    
+# install the latest development version from GitHub
+# if (!requireNamespace("devtools")) install.packages("devtools")
+# devtools::install_github("annecori/EpiEstim")
+library(EpiEstim)
+# the instantaneous reproduction number Ri can be estimated from the 16th day 
+# (May 28, 2009), and only up to the 310th day (March 18, 2010)
+# The generation time of influenza A(H1N1)pdm09 had a mean of 2.6 days and 
+# an SD of 1.3 days, adapted from Yu.etal-Emerg.Infect.Dis.-2012
+Ri <- EstimateR(dec$counts, T.Start = 16:304, T.End = 22:310, 
+                method = "ParametricSI", Mean.SI = 2.6, Std.SI = 1.3)
+@    
+\end{scriptsize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Estimating $R_t$ using \textit{EpiEstim} -- Plot}
+
+\begin{scriptsize}
+<<estimate_R_plot, echo=TRUE, eval=FALSE>>=
+# plot epidemic curve, estimated instantaneous reproduction number, 
+# and serial interval distribution with overlaying holidays
+# plot.ec.R.SI() is my own function whose details are not shown here
+plot.ec.R.SI(dec, Ri, plot.holidays = TRUE)
+@    
+\end{scriptsize}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=6cm]{ec_R_SI.pdf}
+\end{figure}
+\end{frame}
+
+\section*{References}
+\begin{frame}[t]%[t, allowframebreaks]
+	\frametitle{References}
+
+  \printbibliography
+\end{frame}
+
+\section*{Questions}
+\begin{frame}
+\vspace*{2em}
+\centerline{\alert{\Huge Questions?}}
+
+\begin{figure}
+  \centering
+  \includegraphics[height=6cm]{question_mark2.jpg}
+\end{figure}
+\end{frame}
+
+
+\section*{Contact Information}
+\begin{frame}
+\frametitle{Contact Information}
+
+{\Large \href{mailto:caijunthu@gmail.com}{\faEnvelope}}\hspace*{.5em}\href{mailto:cai-j12@mails.tsinghua.edu.cn}{cai-j12@mails.tsinghua.edu.cn}\hspace*{.5em}\href{mailto:caijunthu@gmail.com}{caijunthu@gmail.com}\\
+\vspace*{1em}
+{\Large \href{https://github.com/caijun}{\faGithub}}\hspace*{.5em}\href{https://github.com/caijun}{github.com/caijun}\\
+\vspace*{1em}
+{\Large \href{http://blog.tonytsai.name/}{\faRss}}\hspace*{.5em}\href{http://blog.tonytsai.name/}{blog.tonytsai.name}\\
+
+\vspace*{1em}
+To download this slides, please scan following QR code:
+
+\begin{figure}
+  \centering
+  \includegraphics[height=3cm]{qrcode.png}
+\end{figure}
+\end{frame}
+
+\end{document}
